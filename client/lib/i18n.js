@@ -10,12 +10,16 @@ Tracker.autorun(() => {
   } else {
     language = navigator.language || navigator.userLanguage;
   }
+  // set default to zh-CN
+  if (!language) language = 'zh-CN';
 
   if (language) {
     TAPi18n.setLanguage(language);
 
-    // XXX
+    // XXX T9n implementaion of language code is rather inconsistent. 
+    // What concerns us here: zh_cn, zh_hk, zh_tw
     const shortLanguage = language.split('-')[0];
-    T9n.setLanguage(shortLanguage);
+    const T9nLanguage = language.replace('-', '_').toLowerCase();
+    T9n.setLanguage(T9nLanguage);
   }
 });
