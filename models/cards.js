@@ -108,7 +108,10 @@ Cards.helpers({
   },
 
   cover() {
-    return Attachments.findOne(this.coverId);
+    const cover = Attachments.findOne(this.coverId);
+    // if we return a cover before it is fully stored, we will get errors when we try to display it
+    // todo XXX we could return a default "upload pending" image in the meantime?
+    return cover && cover.url() && cover;
   },
 
   absoluteUrl() {
@@ -194,8 +197,9 @@ Cards.mutations({
 Cards.before.insert((userId, doc) => {
   doc.createdAt = new Date();
   doc.dateLastActivity = new Date();
-  doc.archived = false;
-
+  if(!doc.hasOwnProperty('archived')){
+    doc.archived = false;
+  }
   if (!doc.userId) {
     doc.userId = userId;
   }

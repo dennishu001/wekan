@@ -34,7 +34,7 @@ BlazeComponent.extendComponent({
   },
 
   openNewListForm() {
-    this.componentChildren('addListForm')[0].open();
+    this.childComponents('addListForm')[0].open();
   },
 
   // XXX Flow components allow us to avoid creating these two setter methods by
@@ -45,7 +45,8 @@ BlazeComponent.extendComponent({
   },
 
   scrollLeft(position = 0) {
-    this.$('.js-lists').animate({
+    const lists = this.$('.js-lists');
+    lists && lists.animate({
       scrollLeft: position,
     });
   },
@@ -133,7 +134,7 @@ Template.boardBody.onRendered(function() {
   if (!Meteor.user() || !Meteor.user().isBoardMember())
     return;
 
-  self.$(self.listsDom).sortable({
+  $(self.listsDom).sortable({
     tolerance: 'pointer',
     helper: 'clone',
     handle: '.js-list-header',
@@ -145,7 +146,7 @@ Template.boardBody.onRendered(function() {
       Popup.close();
     },
     stop() {
-      self.$('.js-lists').find('.js-list:not(.js-list-composer)').each(
+      $(self.listsDom).find('.js-list:not(.js-list-composer)').each(
         (i, list) => {
           const data = Blaze.getData(list);
           Lists.update(data._id, {
@@ -160,7 +161,7 @@ Template.boardBody.onRendered(function() {
 
   // Disable drag-dropping while in multi-selection mode
   self.autorun(() => {
-    self.$(self.listsDom).sortable('option', 'disabled',
+    $(self.listsDom).sortable('option', 'disabled',
       MultiSelection.isActive());
   });
 
@@ -179,22 +180,24 @@ BlazeComponent.extendComponent({
 
   // Proxy
   open() {
-    this.componentChildren('inlinedForm')[0].open();
+    this.childComponents('inlinedForm')[0].open();
   },
 
   events() {
     return [{
       submit(evt) {
         evt.preventDefault();
-        const title = this.find('.list-name-input');
-        if ($.trim(title.value)) {
+        const titleInput = this.find('.list-name-input');
+        const title = titleInput.value.trim();
+        if (title) {
           Lists.insert({
-            title: title.value,
+            title,
             boardId: Session.get('currentBoard'),
             sort: $('.list').length,
           });
 
-          title.value = '';
+          titleInput.value = '';
+          titleInput.focus();
         }
       },
     }];
