@@ -54,11 +54,11 @@ template(name="header")
           the list of all boards.
         if isSandstorm
           .wekan-logo
-            img(src="{{pathFor '/wekan-logo-header.png'}}" alt="Wekan")
+            img(src="{{pathFor '/wekan-logo-header.png'}}" alt="伟海看板")
         else
           unless currentSetting.hideLogo
             a.wekan-logo(href="{{pathFor 'home'}}" title="{{_ 'header-logo-title'}}")
-              img(src="{{pathFor '/wekan-logo-header.png'}}" alt="Wekan")
+              img(src="{{pathFor '/wekan-logo-header.png'}}" alt="伟海看板·")
 
   if appIsOffline
     +offlineWarning
